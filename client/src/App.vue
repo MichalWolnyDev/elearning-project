@@ -1,32 +1,18 @@
 <template>
-    <v-app>
-
-        <v-app-bar app color="green">
-
-           <v-app-bar-nav-icon></v-app-bar-nav-icon>
-        <!-- -->
-      </v-app-bar>
-      <v-navigation-drawer app>
-        <!-- -->
-      </v-navigation-drawer>
-
-    
-
-      <!-- Sizes your content based upon application components -->
-      <v-main>
-        <!-- Provides the application the proper gutter -->
-        <v-container fluid>
-          <!-- If using vue-router -->
-          <router-view></router-view>
-        </v-container>
-      </v-main>
-
-      <v-footer app>
-        <!-- -->
-        blablabla
-      </v-footer>
-    </v-app>
+  <div id="app">
+    <router-view/>
+  </div>
 </template>
 
 <style>
+
+body, html{
+  /* background-color: #1f3f49; */
+  background-color: #182f37;
+  padding: 0;
+  margin: 0;
+}
+*, ::after, ::before{
+  box-sizing: border-box;
+}
 </style>
