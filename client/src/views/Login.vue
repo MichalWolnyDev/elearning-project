@@ -2,18 +2,9 @@
   <div class="login__container">
     <div class="login__box">
       <div>
-        <v-card class="login__card" elevation="2" color="#1f3f49">
+        <v-card class="login__card" elevation="2">
           <v-responsive>
             <form>
-              <v-text-field
-                v-model="name"
-                :error-messages="nameErrors"
-                :counter="10"
-                label="Name"
-                required
-                @input="$v.name.$touch()"
-                @blur="$v.name.$touch()"
-              ></v-text-field>
               <v-text-field
                 v-model="email"
                 :error-messages="emailErrors"
@@ -22,9 +13,23 @@
                 @input="$v.email.$touch()"
                 @blur="$v.email.$touch()"
               ></v-text-field>
+              <v-text-field
+                v-model="password"
+                label="Hasło"
+                :error-messages="passwordErrors"
+                :append-icon="value ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append="() => (value = !value)"
+                :type="value ? 'password' : 'text'"
+                :passwordRules="[
+                  passwordRules.required,
+                  passwordRules.password,
+                ]"
+                @input="$v.password.$touch()"
+                @blur="$v.password.$touch()"
+              ></v-text-field>
 
-              <v-btn class="mr-4" @click="submit"> submit </v-btn>
-              <v-btn @click="clear"> clear </v-btn>
+              <br />
+              <v-btn block class="mt-4" @click="submit"> Zaloguj </v-btn>
             </form>
           </v-responsive>
         </v-card>
@@ -34,35 +39,46 @@
 </template>
 <script>
 import { validationMixin } from "vuelidate";
-import { required, maxLength, email } from "vuelidate/lib/validators";
+import { required, minLength, email } from "vuelidate/lib/validators";
 
 export default {
   mixins: [validationMixin],
 
   validations: {
-    name: { required, maxLength: maxLength(10) },
     email: { required, email },
+    password: { required, minLength: minLength(8) },
   },
 
   data: () => ({
-    name: "",
     email: "",
+    password: "",
+    submitStatus: null,
+    value: true,
+    passwordRules: {
+      required: (value) => !!value || "Wymagane.",
+      password: (value) => {
+        const pattern =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+        return (
+          pattern.test(value) ||
+          "Min. 8 znaków, jedna wielka litera, liczba oraz znak specjalny"
+        );
+      },
+    },
   }),
 
   computed: {
-    nameErrors() {
-      const errors = [];
-      if (!this.$v.name.$dirty) return errors;
-      !this.$v.name.maxLength &&
-        errors.push("Name must be at most 10 characters long");
-      !this.$v.name.required && errors.push("Name is required.");
-      return errors;
-    },
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.email && errors.push("Must be valid e-mail");
-      !this.$v.email.required && errors.push("E-mail is required");
+      !this.$v.email.email && errors.push("Niepoprawny adres e-mail");
+      !this.$v.email.required && errors.push("E-mail jest wymagany");
+      return errors;
+    },
+    passwordErrors() {
+      const errors = [];
+      if (!this.$v.password.$dirty) return errors;
+      !this.$v.password.required && errors.push("Podaj hasło");
       return errors;
     },
   },
@@ -70,13 +86,18 @@ export default {
   methods: {
     submit() {
       this.$v.$touch();
-    },
-    clear() {
-      this.$v.$reset();
-      this.name = "";
-      this.email = "";
-    },
-  },
+      if (this.$v.$invalid) {
+        this.submitStatus = "ERROR";
+      } else {
+        // do your submit logic here
+        this.submitStatus = "PENDING";
+        setTimeout(() => {
+          this.submitStatus = "OK";
+        }, 500);
+      }
+
+    }
+  }
 };
 </script>
 
