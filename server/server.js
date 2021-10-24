@@ -4,6 +4,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyparser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const User = require('./models/user');
+const {auth} = require('./middlewares/auth');
 
 // parse env variables
 require('dotenv').config();
