@@ -40,6 +40,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minLength, email } from "vuelidate/lib/validators";
+import { mapActions } from "vuex";
 
 export default {
   mixins: [validationMixin],
@@ -84,20 +85,45 @@ export default {
   },
 
   methods: {
+    ...mapActions(["userInfoRequest"]),
     submit() {
+      var that = this;
       this.$v.$touch();
+      
+
       if (this.$v.$invalid) {
         this.submitStatus = "ERROR";
       } else {
         // do your submit logic here
+
+        this.$http
+          .post("http://localhost:9000/api/login", {
+            email: this.email,
+            password: this.password,
+          })
+          .then(function (response) {
+            console.log(response);
+            // that.userInfoRequest();
+            that.getUserInfo();
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
         this.submitStatus = "PENDING";
         setTimeout(() => {
           this.submitStatus = "OK";
         }, 500);
       }
-
+    },
+    getUserInfo(){
+        this.$http.get("http://localhost:9000/api/profile")
+                .then((res) => {
+                  console.log(res);
+                    // context.commit("setUserInfo", res.data)
+                });
     }
-  }
+  },
 };
 </script>
 

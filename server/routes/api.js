@@ -66,7 +66,6 @@ router.post('/api/login', function(req,res){
 
 // get logged in user
 router.get('/api/profile',auth,function(req,res){
-  console.log(res);
   res.json({
       isAuth: true,
       id: req.user._id,

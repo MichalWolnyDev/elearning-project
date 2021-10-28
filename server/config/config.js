@@ -1,6 +1,6 @@
 const config = {
     default: {
-        SECRET: 'mysecretkey',
+        SECRET: process.env.SECRET,
         DATABASE: process.env.MONGODB_URI
     },
     production: {
