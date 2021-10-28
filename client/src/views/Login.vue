@@ -97,7 +97,7 @@ export default {
         // do your submit logic here
 
         this.$http
-          .post("http://localhost:9000/api/login", {
+          .post("/api/login", {
             email: this.email,
             password: this.password,
           })
@@ -117,9 +117,8 @@ export default {
       }
     },
     getUserInfo(){
-        this.$http.get("http://localhost:9000/api/profile")
+        this.$http.get("/api/profile")
                 .then((res) => {
-                  console.log(res);
                     // context.commit("setUserInfo", res.data)
                 });
     }

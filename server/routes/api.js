@@ -52,7 +52,8 @@ router.post('/api/login', function(req,res){
       
               user.generateToken((err,user) => {
                   if(err) return res.status(400).send(err);
-                  res.cookie('auth',user.token).json({
+                  res.cookie('auth',user.token, {credentials: 'include', maxAge: 900000,
+                  httpOnly: true,}).json({
                       isAuth : true,
                       id : user._id,
                       email : user.email
