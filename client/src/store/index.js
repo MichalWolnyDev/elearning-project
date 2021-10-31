@@ -7,12 +7,16 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state: {
         userInfo: null,
-        test: "dupa"
+        test: "dupa",
+        loginApiStatus: ""
     },
     getters: {
         getUserInfo(state) { 
             return state.userInfo
-        }
+        },
+        getLoginApiStatus(state) {
+            return state.loginApiStatus;
+          },
     },
     actions: {
         userInfoRequest(context) {
@@ -21,11 +25,40 @@ const store = new Vuex.Store({
                     context.commit("setUserInfo", res.data)
                 });
         },
+        async loginApi({ commit }, payload) {
+            const response = await Vue.axios
+              .post("/api/login", 
+              payload,{withCredentials: true, credentials: 'include'})
+              .catch((err) => {
+                console.log(err);
+              });
+         
+            if (response && response.data) {
+              commit("setLoginApiStatus", "success");
+            } else {
+              commit("setLoginApiStatus", "failed");
+            }
+          },
+          async userProfile({commit}){
+            const response = await Vue.axios
+            .get("/api/profile",{withCredentials: true, credentials: 'include'})
+            .catch((err) => {
+              console.log(err);
+            });
+           
+            if(response && response.data){
+              commit("setUserInfo", response.data);
+
+            }
+          }
     },
     mutations:{
         setUserInfo(state, data) {
             return state.userInfo = data
         },
+        setLoginApiStatus(state, data) {
+            state.loginApiStatus = data;
+          },
     }
 });
 

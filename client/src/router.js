@@ -4,7 +4,6 @@ import Router from "vue-router";
 import store from "./store";
 import Login from "./views/Login.vue";
 import Dashboard from "./views/Dashboard.vue";
-
 import Quiz from "./views/Dashboard/Admin/Quiz.vue";
 import Users from "./views/Dashboard/Admin/Users.vue";
 import Students from "./views/Dashboard/Students.vue";
@@ -13,7 +12,7 @@ Vue.use(Router);
 
 let router = new Router({
   mode: "history",
-  // base: process.env.BASE_URL,
+  base: process.env.BASE_URL,
   routes: [
     {
       title: "Login Page",
@@ -30,7 +29,8 @@ let router = new Router({
       name: "dashboard",
       component: Dashboard,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        is_admin: false
       },
       children: [
         {
@@ -38,6 +38,7 @@ let router = new Router({
           name: "users",
           component: Users,
           meta: {
+            requiresAuth: true,
             is_admin: true,
           }
         },
@@ -46,6 +47,7 @@ let router = new Router({
           name: "quiz",
           component: Quiz,
           meta: {
+            requiresAuth: true,
             is_admin: true
           }
 
@@ -53,62 +55,86 @@ let router = new Router({
         {
           path: "/dashboard/students",
           name: "students",
-          component: Students
-         
+          component: Students,
+          meta: {
+            requiresAuth: true,
+            is_admin: false
+          }
+
 
         }
       ]
     },
-    
-  
+
+
   ]
 });
 
 
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.requiresAuth) {
+    var userProfile = store.getters["getUserInfo"];
+    if (userProfile == null) {
+      await store.dispatch("userProfile");
+      userProfile = store.getters["getUserInfo"];
+      console.log(userProfile);
 
-router.beforeEach((to, from, next) => {
-  let user = store.getters.getUserInfo;
-
-  console.log(user);
-  console.log(store.getters);
-  console.log(store.getters.getUserInfo);
-  console.log(user);
-  if (to.matched.some(record => {
-    console.log(record);
-   
-
-    return record.meta.requiresAuth;
-  })) {
-      if (user == null) {
-        next({
-          path: '/',
-          params: { nextUrl: to.fullPath }
-        })
+      if(userProfile.error == true){
+        return next({ path: "/" });
       } else {
-        console.log(store.getters);
-        console.log(user);
-        if (to.matched.some(record => record.meta.is_admin)) {
-          if (user.role == 'admin') {
-            next({ name: 'dashboard' })
-          } else {
-            next()
-
-          }
+        if (userProfile.isAuth === false) {
+          return next({ path: "/login" });
         } else {
-          next()
+         if(to.meta.is_admin){
+           if(userProfile.role == 'admin'){
+             return next();
+           } else {
+             return next({ path: "/dashboard"})
+           }
+         } else {
+           return next();
+         }
         }
       }
-  } else if (to.matched.some(record => record.meta.guest)) {
-    if (user == null) {
-
-      next()
-    } else {
-      next({ name: 'dashboard' })
+    } else{
+      return next();
     }
   } else {
-    next()
-    
+    return next();
   }
-})
+  
+});
+// router.beforeEach((to, from, next) => {
+  
+//     var user = store.getters['getUserInfo'];
+//     if (to.matched.some(record => record.meta.requiresAuth)) {
+//         if (user == null) {
+//           next({
+//             path: '/',
+//             params: { nextUrl: to.fullPath }
+//           })
+//         } else {
+//           if (to.matched.some(record => record.meta.is_admin)) {
+//             if (user.role == 'admin') {
+//               next({ name: 'dashboard' })
+//             } else {
+//               next()
+
+//             }
+//           } else {
+//             next()
+//           }
+//         }
+//     } else if (to.matched.some(record => record.meta.guest)) {
+//       if (user == null) {
+//         next()
+//       } else {
+//         next({ name: 'dashboard' })
+//       }
+//     } else {
+//       next()
+
+//     }
+// })
 
 export default router;

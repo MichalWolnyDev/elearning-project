@@ -59,6 +59,7 @@ router.post('/api/login', function(req,res){
                       email : user.email,
                       role: user.role
                   });
+
               });    
           });
         });

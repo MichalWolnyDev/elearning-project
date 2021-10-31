@@ -40,8 +40,8 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minLength, email } from "vuelidate/lib/validators";
-import { mapActions } from "vuex";
-import router from "../router"; 
+import { mapGetters, mapActions } from "vuex";
+// import router from "../router";
 
 export default {
   mixins: [validationMixin],
@@ -70,6 +70,8 @@ export default {
   }),
 
   computed: {
+    ...mapGetters(["getUserInfo", "getLoginApiStatus"]),
+
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
@@ -86,54 +88,34 @@ export default {
   },
 
   methods: {
-    ...mapActions(["userInfoRequest"]),
-    // ...mapGetters(["getUserInfo"]),
-    submit() {
-      var that = this;
+    ...mapActions(["userInfoRequest", "loginApi"]),
+    async submit() {
+      // var that = this;
       this.$v.$touch();
-      
 
       if (this.$v.$invalid) {
         this.submitStatus = "ERROR";
       } else {
         // do your submit logic here
 
-        this.$http
-          .post("/api/login", {
-            email: this.email,
-            password: this.password,
-          })
-          .then(function (response) {
-            console.log(response);
-            that.userInfoRequest();
-            // that.getUserInfo();
-            // console.log(window.$cookies.get('auth'));
-            router.push({name:'dashboard'});
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        await this.loginApi({
+          email: this.email,
+          password: this.password,
+        });
 
-        this.submitStatus = "PENDING";
-        setTimeout(() => {
-          this.submitStatus = "OK";
-        }, 500);
+        if (this.getLoginApiStatus == "success") {
+          this.$router.push("/dashboard");
+        } else {
+          alert("failed");
+        }
       }
     },
-    // getUserInfo(){
-    //     this.$http.get("/api/profile")
-    //             .then((res) => {
-    //               console.log(res + "abc");
-    //                 // context.commit("setUserInfo", res.data)
-    //             });
-    // }
+  
   },
-  mounted(){
-    //  console.log(this.$cookies.isKey('auth'));
-     
-    //  console.log(this.userInfoRequest());
-    //  console.log(this.$cookies.get('auth'));
-  }
+  mounted() {
+    // this.getUserInfo();
+
+  },
 };
 </script>
 

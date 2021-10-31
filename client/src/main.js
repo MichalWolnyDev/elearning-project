@@ -16,7 +16,7 @@ Vue.use(VueAxios, axios);
 Vue.use(vuex);
 Vue.use(VueCookies)
 
-
+Vue.prototype.$axios = axios;
 
 new Vue({
   router,
