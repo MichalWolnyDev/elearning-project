@@ -41,6 +41,7 @@
 import { validationMixin } from "vuelidate";
 import { required, minLength, email } from "vuelidate/lib/validators";
 import { mapActions } from "vuex";
+import router from "../router"; 
 
 export default {
   mixins: [validationMixin],
@@ -86,6 +87,7 @@ export default {
 
   methods: {
     ...mapActions(["userInfoRequest"]),
+    // ...mapGetters(["getUserInfo"]),
     submit() {
       var that = this;
       this.$v.$touch();
@@ -103,8 +105,10 @@ export default {
           })
           .then(function (response) {
             console.log(response);
-            // that.userInfoRequest();
-            that.getUserInfo();
+            that.userInfoRequest();
+            // that.getUserInfo();
+            // console.log(window.$cookies.get('auth'));
+            router.push({name:'dashboard'});
           })
           .catch(function (error) {
             console.log(error);
@@ -116,13 +120,20 @@ export default {
         }, 500);
       }
     },
-    getUserInfo(){
-        this.$http.get("/api/profile")
-                .then((res) => {
-                    // context.commit("setUserInfo", res.data)
-                });
-    }
+    // getUserInfo(){
+    //     this.$http.get("/api/profile")
+    //             .then((res) => {
+    //               console.log(res + "abc");
+    //                 // context.commit("setUserInfo", res.data)
+    //             });
+    // }
   },
+  mounted(){
+    //  console.log(this.$cookies.isKey('auth'));
+     
+    //  console.log(this.userInfoRequest());
+    //  console.log(this.$cookies.get('auth'));
+  }
 };
 </script>
 

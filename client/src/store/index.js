@@ -16,10 +16,10 @@ const store = new Vuex.Store({
     },
     actions: {
         userInfoRequest(context) {
-            // this.$http.get("/api/profile")
-            //     .then((res) => {
-            //         context.commit("setUserInfo", res.data)
-            //     });
+            Vue.axios.get("/api/profile")
+                .then((res) => {
+                    context.commit("setUserInfo", res.data)
+                });
         },
     },
     mutations:{

@@ -32,6 +32,10 @@ const userSchema = mongoose.Schema({
         minlength:8
 
     },
+    role: {
+        type: String,
+        required: true
+    },
     token:{
         type: String
     }
@@ -78,7 +82,6 @@ userSchema.methods.comparePassword = function(password, cb) {
 userSchema.methods.generateToken = function(cb) {
      var user =  this;
      var token = jwt.sign(user._id.toHexString(),confiq.SECRET);
-
      user.token = token;
      user.save((err,user) => {
          if(err){

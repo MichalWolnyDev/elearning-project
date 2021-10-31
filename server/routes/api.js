@@ -56,7 +56,8 @@ router.post('/api/login', function(req,res){
                   httpOnly: true,}).json({
                       isAuth : true,
                       id : user._id,
-                      email : user.email
+                      email : user.email,
+                      role: user.role
                   });
               });    
           });
@@ -71,7 +72,8 @@ router.get('/api/profile',auth,function(req,res){
       isAuth: true,
       id: req.user._id,
       email: req.user.email,
-      name: req.user.firstName + " " + req.user.lastName
+      name: req.user.firstName + " " + req.user.lastName,
+      role: req.user.role
       
   })
 });

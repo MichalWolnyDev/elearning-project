@@ -4,13 +4,18 @@ import router from "./router";
 import vuex from "vuex";
 import vuetify from '@/plugins/vuetify';
 
-import store from "./store/index"
+import store from "./store/"
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import VueCookies from 'vue-cookies'
+
+
 Vue.config.productionTip = false;
 
 Vue.use(VueAxios, axios);
 Vue.use(vuex);
+Vue.use(VueCookies)
+
 
 
 new Vue({
