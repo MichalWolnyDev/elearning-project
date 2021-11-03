@@ -25,6 +25,9 @@ const store = new Vuex.Store({
                     context.commit("setUserInfo", res.data)
                 });
         },
+        clearUser(context){
+          context.commit("setUserInfo", null);
+        },
         async loginApi({ commit }, payload) {
             const response = await Vue.axios
               .post("/api/login", 

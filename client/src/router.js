@@ -73,68 +73,39 @@ let router = new Router({
 
 router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
+    await store.dispatch("userProfile");
     var userProfile = store.getters["getUserInfo"];
-    if (userProfile == null) {
-      await store.dispatch("userProfile");
-      userProfile = store.getters["getUserInfo"];
-      console.log(userProfile);
 
-      if(userProfile.error == true){
+    if (userProfile == null) {
+
+
+      if (userProfile.error == true) {
         return next({ path: "/" });
       } else {
         if (userProfile.isAuth === false) {
           return next({ path: "/login" });
         } else {
-         if(to.meta.is_admin){
-           if(userProfile.role == 'admin'){
-             return next();
-           } else {
-             return next({ path: "/dashboard"})
-           }
-         } else {
-           return next();
-         }
+          return next();
         }
       }
-    } else{
-      return next();
+
+    } else {
+      if (to.meta.is_admin) {
+        if (userProfile.role == 'admin') {
+
+          return next();
+        } else {
+          return next({ path: "/dashboard" })
+        }
+      } else {
+        return next();
+      }
     }
   } else {
     return next();
   }
-  
+
 });
-// router.beforeEach((to, from, next) => {
-  
-//     var user = store.getters['getUserInfo'];
-//     if (to.matched.some(record => record.meta.requiresAuth)) {
-//         if (user == null) {
-//           next({
-//             path: '/',
-//             params: { nextUrl: to.fullPath }
-//           })
-//         } else {
-//           if (to.matched.some(record => record.meta.is_admin)) {
-//             if (user.role == 'admin') {
-//               next({ name: 'dashboard' })
-//             } else {
-//               next()
 
-//             }
-//           } else {
-//             next()
-//           }
-//         }
-//     } else if (to.matched.some(record => record.meta.guest)) {
-//       if (user == null) {
-//         next()
-//       } else {
-//         next({ name: 'dashboard' })
-//       }
-//     } else {
-//       next()
-
-//     }
-// })
 
 export default router;

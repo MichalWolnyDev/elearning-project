@@ -40,12 +40,22 @@
               <v-list-item-title v-text="item.text" ></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <v-list-item @click="logout">
+            <v-list-item-icon>
+              <v-icon v-text="'mdi-logout'"></v-icon>
+            </v-list-item-icon>
+             <v-list-item-content>
+              <v-list-item-title >Wyloguj</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list-item-group>
       </v-list>
   </v-card>
 </template>
 
 <script>
+import { mapActions } from "vuex";
   export default {
     data: () => ({
       selectedItem: 0,
@@ -55,5 +65,22 @@
         { text: 'Students', icon: 'mdi-file-document', link: '/dashboard/students' },
       ],
     }),
+    methods: {
+      ...mapActions(["clearUser"]),
+      logout(){
+        // var t = this;
+
+        this.$http.get('/api/logout')
+        .then((res) => {
+          console.log(res);
+           this.$router.push("/");
+           this.clearUser();
+
+        })
+        .catch((err) =>{
+          console.log(err);
+        })
+      }
+    }
   }
 </script>
