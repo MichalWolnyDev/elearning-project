@@ -52,7 +52,7 @@ router.post('/api/login', function(req,res){
       
               user.generateToken((err,user) => {
                   if(err) return res.status(400).send(err);
-                  res.cookie('auth',user.token, {credentials: 'include', maxAge: 900000,
+                  res.cookie('auth',user.token, {credentials: 'include', maxAge: 2592000,
                   httpOnly: true,}).json({
                       isAuth : true,
                       id : user._id,
@@ -80,13 +80,27 @@ router.get('/api/profile',auth,function(req,res){
 });
 
 //logout user
-router.get('/api/logout',auth,function(req,res){
-
+router.get('/api/logout',auth ,function(req,res){
   req.user.deleteToken(req.token,(err,user)=>{
       if(err) return res.status(400).send(err);
+
       res.sendStatus(200);
   });
 
 }); 
+
+//return user list
+router.get('/api/usersList', function(req, res) {
+  User.find({}, function(err, users) {
+    var userMap = {};
+
+    users.forEach(function(user) {
+      console.log(user);
+      userMap[user._id] = user;
+    });
+
+    res.send(userMap);  
+  });
+});
 
 module.exports = router

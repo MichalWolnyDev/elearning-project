@@ -1,9 +1,7 @@
 <template>
   <div>
     <v-container class="spacing-playground pa-6" fluid>
-      <v-row class="mb-10">
-        <v-btn color="success" elevation="3"> Dodaj użytkownika </v-btn>
-      </v-row>
+        <AddUser v-model="showUserForm"/>
       <v-row>
         <v-card
           v-for="(user, id) in users"
@@ -12,10 +10,19 @@
           width="100%"
         >
           <div>
-            <span> {{ user.name }} {{ user.surname }} </span>
+            <p class="users__role">
+              Rola: <span :class="{'admin': user.role === 'admin', 'teacher': user.role === 'teacher'}">{{ user.role }}</span>
+            </p>
+            <p class="users__name">
+              {{ user.firstName }} {{ user.lastName }}
+            </p>
+            <p class="users__email">
+              e-mail: {{ user.email }}
+            </p>
+          
           </div>
           <div class="d-flex">
-            <v-tooltip bottom>
+            <!-- <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   elevation="2"
@@ -26,7 +33,7 @@
                 ></v-btn>
               </template>
               <span>Something</span>
-            </v-tooltip>
+            </v-tooltip> -->
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn elevation="2" icon v-bind="attrs" v-on="on">
@@ -43,19 +50,61 @@
 </template>
 
 <script>
+import AddUser from "@/components/dashboard/AddUser.vue";
+
+
 export default {
   name: "users",
+  components: {
+    AddUser
+  },
   data: () => ({
-    users: [
-      {
-        name: "michal",
-        surname: "wolny",
-      },
-      {
-        name: "jan",
-        surname: "nowak",
-      },
-    ],
+    users: [],
+    showUserForm: false,
   }),
+  methods: {
+    async fetchUsers(){
+      var _this = this;
+      await this.$http.get('/api/usersList')
+      .then((res) => {
+        _this.users = res.data;
+
+        console.log(_this.users);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    }
+  },
+  mounted(){
+    this.fetchUsers();
+  }
 };
 </script>
+
+<style lang="scss" scoped>
+.users{
+
+  &__role{
+    margin-bottom: 0;
+    font-size: 12px;
+    color: #cecece;
+
+   span{
+      &.admin{
+      color: red;
+    }
+      &.teacher{
+      color: green;
+    }
+      
+   }
+  }
+  &__name{
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 0;
+  }
+
+}
+</style>
