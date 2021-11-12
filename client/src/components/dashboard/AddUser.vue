@@ -176,7 +176,7 @@ export default {
         this.submitStatus = "ERROR";
       } else {
         this.$http
-          .post("/api/register", this.formData)
+          .post("/api/user/register", this.formData)
           .then((res) => {
             this.show = false;
             console.log(res);

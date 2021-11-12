@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
 })
 
 // adding new user (sign-up route)
-router.post('/api/register', function (req, res) {
+router.post('/user/register', function (req, res) {
   // taking a user
   const newuser = new User(req.body);
   console.log(newuser);
@@ -33,7 +33,7 @@ router.post('/api/register', function (req, res) {
 });
 
 // login user
-router.post('/api/login', function(req,res){
+router.post('/user/login', function(req,res){
   let token = req.cookies.auth;
 
   User.findByToken(token,(err,user)=>{
@@ -68,7 +68,7 @@ router.post('/api/login', function(req,res){
 });
 
 // get logged in user
-router.get('/api/profile',auth,function(req,res){
+router.get('/user/profile',auth,function(req,res){
   res.json({
       isAuth: true,
       id: req.user._id,
@@ -79,8 +79,21 @@ router.get('/api/profile',auth,function(req,res){
   })
 });
 
+// get logged in user
+router.delete('/user/delete/:id',function(req,res){
+  User
+  .findByIdAndRemove(req.params.id)
+  .exec()
+  .then(doc => {
+    if(!doc) { return res.status(404).end(); }
+
+    return res.status(204).end();
+  })
+  .catch(err => next(err));
+});
+
 //logout user
-router.get('/api/logout',auth ,function(req,res){
+router.get('/user/logout',auth ,function(req,res){
   req.user.deleteToken(req.token,(err,user)=>{
       if(err) return res.status(400).send(err);
 
@@ -90,7 +103,7 @@ router.get('/api/logout',auth ,function(req,res){
 }); 
 
 //return user list
-router.get('/api/usersList', function(req, res) {
+router.get('/user/usersList', function(req, res) {
   User.find({}, function(err, users) {
     var userMap = {};
 

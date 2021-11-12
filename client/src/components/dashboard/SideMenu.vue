@@ -70,7 +70,7 @@ import { mapActions } from "vuex";
       logout(){
         // var t = this;
 
-        this.$http.get('/api/logout')
+        this.$http.get('/api/user/logout')
         .then((res) => {
           console.log(res);
            this.$router.push("/");

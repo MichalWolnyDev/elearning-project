@@ -36,7 +36,7 @@
             </v-tooltip> -->
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn elevation="2" icon v-bind="attrs" v-on="on">
+                <v-btn elevation="2" icon v-bind="attrs" v-on="on" @click="deleteUser(id)">
                   <v-icon v-text="'mdi-delete'"></v-icon>
                 </v-btn>
               </template>
@@ -65,11 +65,21 @@ export default {
   methods: {
     async fetchUsers(){
       var _this = this;
-      await this.$http.get('/api/usersList')
+      await this.$http.get('/api/user/usersList')
       .then((res) => {
         _this.users = res.data;
 
         console.log(_this.users);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    },
+    async deleteUser(id){
+      // var _this = this;
+      await this.$http.delete('/api/user/delete/' + id)
+      .then((res) => {
+        console.log(res);
       })
       .catch((err) => {
         console.log(err);
