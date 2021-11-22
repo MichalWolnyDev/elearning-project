@@ -20,7 +20,7 @@ const store = new Vuex.Store({
     },
     actions: {
         userInfoRequest(context) {
-            Vue.axios.get("/api/profile")
+            Vue.axios.get("/api/user/profile")
                 .then((res) => {
                     context.commit("setUserInfo", res.data)
                 });
@@ -30,7 +30,7 @@ const store = new Vuex.Store({
         },
         async loginApi({ commit }, payload) {
             const response = await Vue.axios
-              .post("/api/login", 
+              .post("/api/user/login", 
               payload,{withCredentials: true, credentials: 'include'})
               .catch((err) => {
                 console.log(err);
@@ -44,7 +44,7 @@ const store = new Vuex.Store({
           },
           async userProfile({commit}){
             const response = await Vue.axios
-            .get("/api/profile",{withCredentials: true, credentials: 'include'})
+            .get("/api/user/profile",{withCredentials: true, credentials: 'include'})
             .catch((err) => {
               console.log(err);
             });
