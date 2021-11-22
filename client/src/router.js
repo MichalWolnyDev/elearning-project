@@ -75,7 +75,6 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     await store.dispatch("userProfile");
     var userProfile = store.getters["getUserInfo"];
-    console.log(userProfile)
 
     if (userProfile.error == true) {
       return next({ path: "/" });

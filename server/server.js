@@ -35,6 +35,7 @@ mongoose.connect(process.env.MONGODB_URI,{ useNewUrlParser: true, useUnifiedTopo
 
 // Defining route middleware
 app.use('/api', require('./routes/api'));
+app.use('/quizapi', require('./routes/quizApi'));
 
 
 // Listening to port
