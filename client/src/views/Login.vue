@@ -90,7 +90,7 @@ export default {
   methods: {
     ...mapActions(["userInfoRequest", "loginApi"]),
     async submit() {
-      // var that = this;
+      var _this = this;
       this.$v.$touch();
 
       if (this.$v.$invalid) {
@@ -104,7 +104,9 @@ export default {
         });
 
         if (this.getLoginApiStatus == "success") {
-          this.$router.push("/dashboard");
+          setTimeout(() => {
+          _this.$router.push("/dashboard");
+          }, 1500);
         } else {
           alert("failed");
         }

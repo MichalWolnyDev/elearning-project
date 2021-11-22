@@ -75,32 +75,28 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     await store.dispatch("userProfile");
     var userProfile = store.getters["getUserInfo"];
+    console.log(userProfile)
 
-    if (userProfile == null) {
-
-
-      if (userProfile.error == true) {
-        return next({ path: "/" });
+    if (userProfile.error == true) {
+      return next({ path: "/" });
+    } 
+    else {
+      if (userProfile.isAuth === false) {
+        return next({ path: "/login" });
       } else {
-        if (userProfile.isAuth === false) {
-          return next({ path: "/login" });
+        if (to.meta.is_admin) {
+          if (userProfile.role == 'admin') {
+  
+            return next();
+          } else {
+            return next({ path: "/dashboard" })
+          }
         } else {
           return next();
         }
-      }
-
-    } else {
-      if (to.meta.is_admin) {
-        if (userProfile.role == 'admin') {
-
-          return next();
-        } else {
-          return next({ path: "/dashboard" })
-        }
-      } else {
-        return next();
       }
     }
+   
   } else {
     return next();
   }
