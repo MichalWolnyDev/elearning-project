@@ -8,14 +8,13 @@
         <v-list-item link>
           <v-list-item-content>
             <v-list-item-title class="text-h6">
-              Admin
+              {{ currentUser.name }}
             </v-list-item-title>
-            <v-list-item-subtitle>admin@test.pl</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ currentUser.role }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ currentUser.email }}</v-list-item-subtitle>
           </v-list-item-content>
 
-          <v-list-item-action>
-            <v-icon>mdi-menu-down</v-icon>
-          </v-list-item-action>
+          
         </v-list-item>
       </v-list>
       <v-divider></v-divider>
@@ -65,6 +64,11 @@ import { mapActions } from "vuex";
         { text: 'Students', icon: 'mdi-file-document', link: '/dashboard/students' },
       ],
     }),
+    computed: {
+      currentUser(){
+        return this.$store.getters.getUserInfo;
+      }
+    },
     methods: {
       ...mapActions(["clearUser"]),
       logout(){
