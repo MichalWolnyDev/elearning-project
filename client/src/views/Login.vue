@@ -3,7 +3,7 @@
     <div class="login__box">
       <div>
         <v-card class="login__card" elevation="2">
-          <v-responsive>
+          <v-responsive v-if="showLoginForm">
             <form>
               <v-text-field
                 v-model="email"
@@ -32,6 +32,7 @@
               <v-btn block class="mt-4" @click="submit"> Zaloguj </v-btn>
             </form>
           </v-responsive>
+          <Loader v-else/>
         </v-card>
       </div>
     </div>
@@ -41,10 +42,15 @@
 import { validationMixin } from "vuelidate";
 import { required, minLength, email } from "vuelidate/lib/validators";
 import { mapGetters, mapActions } from "vuex";
+import Loader from "@/components/Loader.vue";
 // import router from "../router";
 
 export default {
   mixins: [validationMixin],
+
+  components: {
+    Loader
+  },
 
   validations: {
     email: { required, email },
@@ -55,6 +61,8 @@ export default {
     email: "",
     password: "",
     submitStatus: null,
+    showLoader: false,
+    showLoginForm: true,
     value: true,
     passwordRules: {
       required: (value) => !!value || "Wymagane.",
@@ -93,7 +101,10 @@ export default {
       var _this = this;
       this.$v.$touch();
 
+      this.showLoginForm = false
+
       if (this.$v.$invalid) {
+        this.showLoginForm = true;
         this.submitStatus = "ERROR";
       } else {
         // do your submit logic here
@@ -103,12 +114,14 @@ export default {
           password: this.password,
         });
 
-        if (this.getLoginApiStatus == "success") {
+        if (this.getLoginApiStatus.isAuth) {
+          this.showLoginForm = false
           setTimeout(() => {
           _this.$router.push("/dashboard");
           }, 1500);
         } else {
-          alert("failed");
+          this.showLoginForm = true
+          alert(this.getLoginApiStatus.message);
         }
       }
     },

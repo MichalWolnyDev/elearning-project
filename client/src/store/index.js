@@ -29,18 +29,20 @@ const store = new Vuex.Store({
           context.commit("setUserInfo", null);
         },
         async loginApi({ commit }, payload) {
-            const response = await Vue.axios
+            await Vue.axios
               .post("/api/user/login", 
               payload,{withCredentials: true, credentials: 'include'})
+              .then((res) => {
+                console.log(res);
+                commit("setLoginApiStatus", res.data);
+
+              })
               .catch((err) => {
                 console.log(err);
+
               });
          
-            if (response && response.data) {
-              commit("setLoginApiStatus", "success");
-            } else {
-              commit("setLoginApiStatus", "failed");
-            }
+           
           },
           async userProfile({commit}){
             const response = await Vue.axios
