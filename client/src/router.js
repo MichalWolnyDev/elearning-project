@@ -48,7 +48,8 @@ let router = new Router({
           component: Quiz,
           meta: {
             requiresAuth: true,
-            is_admin: true
+            is_admin: false,
+            is_teacher: true
           }
 
         },
@@ -58,7 +59,8 @@ let router = new Router({
           component: Students,
           meta: {
             requiresAuth: true,
-            is_admin: false
+            is_admin: false,
+            is_teacher: false
           }
 
 
@@ -91,8 +93,18 @@ router.beforeEach(async (to, from, next) => {
             return next({ path: "/dashboard" })
           }
         } else {
-          return next();
+          if (to.meta.is_teacher) {
+            if (userProfile.role == 'admin' || userProfile.role == 'teacher') {
+    
+              return next();
+            } else {
+              return next({ path: "/dashboard" })
+            }
+          } else {
+            return next();
+          }
         }
+        
       }
     }
    

@@ -15,7 +15,7 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="6">
+              <v-col cols="12" md="6">
                 <v-text-field
                   label="Nazwa quizu*"
                   v-model="formData.quizName"
@@ -27,11 +27,11 @@
                 </v-text-field>
               </v-col>
 
-              <v-col cols="6">
+              <v-col cols="12" md="6">
                 <v-autocomplete
                   :items="['Matematyka', 'Informatyka', 'Biologia']"
                   label="Kategoria*"
-                  v-model="formData.category"
+                  v-model="formData.quizCategory"
                   :error-messages="categoryErrors"
                 ></v-autocomplete>
               </v-col>
@@ -65,7 +65,7 @@
                 <v-col cols="12">
                   <v-text-field
                     label="Pytanie*"
-                    v-model="formData.questions[id].name"
+                    v-model="formData.questions[id].text"
                     required
                   >
                   </v-text-field>
@@ -76,7 +76,8 @@
               </v-row>
               <v-row>
                 <v-col
-                  cols="6"
+                  cols="12"
+                  md="6"
                   v-for="(answer, id) in question.answers"
                   :key="id"
                 >
@@ -136,6 +137,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import {  mapActions } from "vuex";
 
 export default {
   mixins: [validationMixin],
@@ -143,7 +145,7 @@ export default {
   validations: {
     formData: {
       quizName: { required },
-      category: { required },
+      quizCategory: { required },
     },
   },
 
@@ -170,8 +172,8 @@ export default {
 
     categoryErrors() {
       const errors = [];
-      if (!this.$v.formData.category.$dirty) return errors;
-      !this.$v.formData.category.required && errors.push("Wybierz kategorię");
+      if (!this.$v.formData.quizCategory.$dirty) return errors;
+      !this.$v.formData.quizCategory.required && errors.push("Wybierz kategorię");
       return errors;
     },
   },
@@ -179,10 +181,10 @@ export default {
     return {
       formData: {
         quizName: "",
-        category: "",
+        quizCategory: "",
         questions: [
           {
-            name: "",
+            text: "",
             answers: [
               {
                 text: "",
@@ -210,6 +212,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["fetchQuizzes"]),
     addQuestionForm() {
         const emptyQustion =  {
             name: "",
@@ -247,6 +250,7 @@ export default {
           .post("/quizapi/quizzes/", this.formData)
           .then((res) => {
             this.show = false;
+            this.fetchQuizzes()
             console.log(res);
           })
           .catch((err) => {
@@ -254,6 +258,8 @@ export default {
           });
         this.submitStatus = "Correct";
       }
+
+      console.log(this.submitStatus)
     },
   },
 };
