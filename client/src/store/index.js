@@ -9,7 +9,8 @@ const store = new Vuex.Store({
     userInfo: null,
     test: "dupa",
     loginApiStatus: "",
-    quizList: []
+    quizList: [],
+    singleQuiz: []
   },
   getters: {
     getUserInfo(state) {
@@ -20,6 +21,9 @@ const store = new Vuex.Store({
     },
     getQuizList(state) {
       return state.quizList;
+    },
+    getSingleQuiz(state) {
+      return state.singleQuiz;
     },
   },
   actions: {
@@ -69,6 +73,16 @@ const store = new Vuex.Store({
         .catch((err) => {
           console.log(err);
         });
+    },
+    async fetchSingleQuiz({commit}, payload) {
+      await Vue.axios
+        .get("/quizapi/quizzes/"+payload)
+        .then((res) => {
+          commit("setSingleQuiz",  res.data)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   },
   mutations: {
@@ -80,6 +94,9 @@ const store = new Vuex.Store({
     },
     setQuizList(state, data) {
       state.quizList = data;
+    },
+    setSingleQuiz(state, data) {
+      state.singleQuiz = data;
     },
   }
 });

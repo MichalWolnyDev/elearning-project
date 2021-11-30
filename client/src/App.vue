@@ -13,4 +13,8 @@ body, html{
 *, ::after, ::before{
   box-sizing: border-box;
 }
+a, a:visited{
+  color: inherit;
+  text-decoration: none;
+}
 </style>

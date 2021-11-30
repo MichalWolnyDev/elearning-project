@@ -7,6 +7,7 @@ import Dashboard from "./views/Dashboard.vue";
 import Quiz from "./views/Dashboard/Admin/Quiz.vue";
 import Users from "./views/Dashboard/Admin/Users.vue";
 import Students from "./views/Dashboard/Students.vue";
+import TakeQuiz from "./views/Dashboard/TakeQuiz.vue";
 
 Vue.use(Router);
 
@@ -57,6 +58,18 @@ let router = new Router({
           path: "/dashboard/students",
           name: "students",
           component: Students,
+          meta: {
+            requiresAuth: true,
+            is_admin: false,
+            is_teacher: false
+          }
+
+
+        },
+        {
+          path: "/dashboard/takequiz/:id",
+          name: "takequiz",
+          component: TakeQuiz,
           meta: {
             requiresAuth: true,
             is_admin: false,

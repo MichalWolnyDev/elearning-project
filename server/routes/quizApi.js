@@ -14,25 +14,25 @@ router.get('/quizzes', async (req, res) => {
         return res.status(500).json({"error":error})
     }
 })
-router.get('/quizzes/:category', async (req, res) => {
-    try {
-        const quizCategory = req.params.category 
+// router.get('/quizzes/:category', async (req, res) => {
+//     try {
+//         const quizCategory = req.params.category 
 
-        const quiz = await Quiz.findOne({quizCategory: quizCategory})        
-        if(!quiz){
-            return res.status(404).json({})
-        }else{
-            return res.status(200).json(quiz)
-        }
-    } catch (error) {
-        return res.status(500).json({"error":error})
-    }
-})
+//         const quiz = await Quiz.findOne({quizCategory: quizCategory})        
+//         if(!quiz){
+//             return res.status(404).json({})
+//         }else{
+//             return res.status(200).json(quiz)
+//         }
+//     } catch (error) {
+//         return res.status(500).json({"error":error})
+//     }
+// })
 router.get('/quizzes/:id', async (req, res) => {
     try {
-        const _id = req.params.id 
+        const id = req.params.id 
 
-        const quiz = await Quiz.findById({_id})        
+        const quiz = await Quiz.findById(id)        
         if(!quiz){
             return res.status(404).json({})
         }else{

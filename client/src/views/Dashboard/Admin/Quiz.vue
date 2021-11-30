@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container class="spacing-playground pa-6" fluid>
-        <AddQuiz v-model="showQuizCreate" />
+      <AddQuiz v-model="showQuizCreate" />
 
       <v-row v-if="showList">
         <v-card
@@ -14,10 +14,17 @@
             <p class="quizzes__name">
               {{ quiz.quizName }}
             </p>
+            {{quiz._id}}
             <p class="quizzes__category">Kategoria: {{ quiz.quizCategory }}</p>
-            <p class="quizzes__category">
+            <a :href="'/dashboard/takequiz/' + quiz._id">
+              <v-btn elevation="2">
+              Rozwiąż quiz
+
+              </v-btn>
+            </a>
+            <!-- <p class="quizzes__category">
               Pytania (temp): {{ quiz.questions }}
-            </p>
+            </p> -->
           </div>
           <div class="d-flex">
             <!-- <v-tooltip bottom>
@@ -57,18 +64,17 @@ export default {
   name: "Quiz",
   components: {
     AddQuiz,
-    Loader
+    Loader,
   },
   data: () => ({
     showQuizCreate: false,
-    showList: true
+    showList: true,
   }),
   computed: {
-     ...mapGetters(["getQuizList"]),
+    ...mapGetters(["getQuizList"]),
   },
   methods: {
-    ...mapActions(["fetchQuizzes"])
-    
+    ...mapActions(["fetchQuizzes"]),
   },
   mounted() {
     this.fetchQuizzes();
