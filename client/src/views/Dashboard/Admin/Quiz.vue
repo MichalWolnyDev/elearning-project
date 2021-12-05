@@ -14,7 +14,6 @@
             <p class="quizzes__name">
               {{ quiz.quizName }}
             </p>
-            {{quiz._id}}
             <p class="quizzes__category">Kategoria: {{ quiz.quizCategory }}</p>
             <a :href="'/dashboard/takequiz/' + quiz._id">
               <v-btn elevation="2">
