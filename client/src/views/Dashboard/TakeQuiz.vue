@@ -3,7 +3,9 @@
     <v-container>
       <v-row class="justify-center">
         <div class="pa-6">
-          <h1 class="quiz__title">Rozwiązujesz quiz: {{ getSingleQuiz.quizName }}</h1>
+          <h1 class="quiz__title">
+            Rozwiązujesz quiz: {{ getSingleQuiz.quizName }}
+          </h1>
         </div>
       </v-row>
     </v-container>
@@ -15,20 +17,24 @@
           v-for="(question, id) in getSingleQuiz.questions"
           :key="id"
         >
-
-          <h2 class="question__title">Pytanie nr. {{ id + 1 }}: {{ question.text }}</h2>
-          <div class="answer__row" v-for="(answer, answerId) in question.answers" :key="answerId">
+          <h2 class="question__title">
+            Pytanie nr. {{ id + 1 }}: {{ question.text }}
+          </h2>
+          <div
+            class="answer__row"
+            v-for="(answer, answerId) in question.answers"
+            :key="answerId"
+          >
             <div>
-                <strong>{{ toLetters(answerId+1) }}:</strong>
-            {{ answer.text }}
+              <strong>{{ toLetters(answerId + 1) }}:</strong>
+              {{ answer.text }}
             </div>
             <div>
-              {{ id }} {{ answerId }}
-               <!-- v-model="userAnswers[id][answerId].answer" -->
-               <!-- {{userAnswers[id][answerId]}} -->
-                <v-checkbox @change="checkAnswer(id, answerId)">
-                    
-                </v-checkbox>
+              <v-checkbox
+                :value="false"
+                v-model="userAnswers[id].answer[answerId]"
+              >
+              </v-checkbox>
             </div>
           </div>
         </v-card>
@@ -37,9 +43,7 @@
 
     <v-container>
       <v-row class="d-flex justify-center pa-3">
-        <v-btn color="success">
-          Zapisz
-        </v-btn>
+        <v-btn color="success" @click="checkQuiz"> Zapisz </v-btn>
       </v-row>
     </v-container>
   </div>
@@ -50,13 +54,10 @@ export default {
   name: "TakeQuiz",
   computed: {
     ...mapGetters(["getSingleQuiz"]),
-    
   },
   data: () => ({
-    userAnswers: [],
-    checkedAnswer: [],
+    userAnswers: null,
     quizLength: null,
-    // answerObj: 
   }),
   methods: {
     ...mapActions(["fetchSingleQuiz"]),
@@ -66,63 +67,85 @@ export default {
         out = mod ? String.fromCharCode(64 + mod) : (--pow, "Z");
       return pow ? this.toLetters(pow) + out : out;
     },
-    checkAnswer(questionid, answerid){
-      console.log(questionid)
-      console.log(answerid)
-      
-      // console.log(this.userAnswers[questionid])
-      // this.userAnswers[questionid].answerTrigger = null
-      // this.userAnswers[questionid].answerTrigger = answerid
-      // this.userAnswers[questionid][answerid].answer = true
-      // console.log(this.userAnswers)
-      this.userAnswers[questionid][answerid].answer = !this.userAnswers[questionid][answerid].answer 
-      console.log("answer clicked");
-      // if (!this.userAnswers[questionid]) this.userAnswers[questionid] = [] // if the current question has no answers mapped yet set an empty array 
-      // this.userAnswers[questionid] = this.checkedAnswers[questionid]; // set the answer to whatever value it has currently (true, false)
-    }
+    keyValue(input) {
+      Object.entries(input).forEach(([key, value]) => {
+        console.log(key, value);
+      });
+    },
+    checkQuiz() {
+      // this.userAnswers.map((e) => {
+      //   if (e.answer.length > 0) {
+      //     console.log(e.answer);
+      //   }
+
+      //   console.log(this.getSingleQuiz.questions)
+
+      //   for(var i in e.answer){
+      //     console.log(e.answer[i])
+      //   }
+      // });
+
+      this.getSingleQuiz.questions.map((e) => {
+        // console.log(e.answers)
+      console.log("==================");
+
+        // console.log(this.userAnswers)
+
+        for(var i in e.answers){
+          // console.log(e.answers[i].isCorrect)
+          for(var j in this.userAnswers[i]){
+            console.log(j)
+          }
+          
+        }
+
+        // for(var i in e.answers){
+        //   console.log(e.answers[i])
+        // }
+      });
+      // for (var i in this.userAnswers) {
+      //   console.log(this.userAnswers[i]);
+      //   this.keyValue(this.userAnswers[i])
+      // }
+    },
   },
   mounted() {},
   created() {
     this.fetchSingleQuiz(this.$route.params.id);
   },
-  // watch: {
-  //   'getSingleQuiz': {
-  //     handler: function(){
-  //       var tmp = [{answer: false, test: "dupa"}, {answer: false}, {answer: false}, {answer: false}];
-  //       this.quizLength = this.getSingleQuiz.questions.length;
-
-  //       if(this.quizLength > 0){
-  //         for(var i = 0; i < this.quizLength; i++){
-  //           this.userAnswers[i] = tmp;
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+  watch: {
+    getSingleQuiz: {
+      handler: function () {
+        this.userAnswers = this.getSingleQuiz.questions.map(() => ({
+          answer: [],
+        }));
+      },
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
-.quiz{
-    &__title{
-        @media(max-width: 525px){
-            font-size: 20px;
-        }
+.quiz {
+  &__title {
+    @media (max-width: 525px) {
+      font-size: 20px;
     }
+  }
 }
-.question{
-    &__row{
-        width: 100%;
-    }
-    &__title{
-        padding-bottom: 15px;
-        border-bottom: 1px solid #cecece;
-    }
+.question {
+  &__row {
+    width: 100%;
+  }
+  &__title {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #cecece;
+  }
 }
- .answer{
-     &__row{
-         display: flex;
-         justify-content: space-between;
-         align-items: center;
-     }
- }
+.answer {
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
 </style>
