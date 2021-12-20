@@ -10,7 +10,9 @@
       </v-row>
     </v-container>
 
-    <v-container>
+    <div>
+      <div v-if="!hideQuiz">
+        <v-container>
       <v-row class="question__row">
         <v-card
           class="pa-6 mb-6 w-100"
@@ -32,7 +34,8 @@
             <div>
               <v-checkbox
                 :value="false"
-                v-model="userAnswers[id].answer[answerId]"
+                v-model="userAnswers[id].answer[answerId].val"
+                @change="updateUserAnswer(id, answerId, answer._id)"
               >
               </v-checkbox>
             </div>
@@ -46,6 +49,13 @@
         <v-btn color="success" @click="checkQuiz"> Zapisz </v-btn>
       </v-row>
     </v-container>
+      </div>
+      <div v-else>
+        <h2>
+          Twój wynik: {{ score }}
+        </h2>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -58,6 +68,8 @@ export default {
   data: () => ({
     userAnswers: null,
     quizLength: null,
+    score: null,
+    hideQuiz: false,
   }),
   methods: {
     ...mapActions(["fetchSingleQuiz"]),
@@ -72,41 +84,33 @@ export default {
         console.log(key, value);
       });
     },
+    updateUserAnswer(a, b, c) {
+      this.userAnswers[a].answer[b].id = c;
+    },
     checkQuiz() {
-      // this.userAnswers.map((e) => {
-      //   if (e.answer.length > 0) {
-      //     console.log(e.answer);
-      //   }
-
-      //   console.log(this.getSingleQuiz.questions)
-
-      //   for(var i in e.answer){
-      //     console.log(e.answer[i])
-      //   }
-      // });
+      this.score = 0;
+      
 
       this.getSingleQuiz.questions.map((e) => {
-        // console.log(e.answers)
-      console.log("==================");
 
-        // console.log(this.userAnswers)
+        for (var i in e.answers) {
 
-        for(var i in e.answers){
-          // console.log(e.answers[i].isCorrect)
-          for(var j in this.userAnswers[i]){
-            console.log(j)
+          for (var j = 0; j < 4; j++) {
+            var arr = this.userAnswers[j].answer;
+
+            var temp = arr.find((element) => element.id == e.answers[i]._id);
+
+            if (temp != undefined) {
+              if (temp.val === e.answers[i].isCorrect) {
+                this.score += 1;
+              }
+            }
           }
-          
         }
 
-        // for(var i in e.answers){
-        //   console.log(e.answers[i])
-        // }
       });
-      // for (var i in this.userAnswers) {
-      //   console.log(this.userAnswers[i]);
-      //   this.keyValue(this.userAnswers[i])
-      // }
+      this.hideQuiz = true
+ 
     },
   },
   mounted() {},
@@ -117,7 +121,12 @@ export default {
     getSingleQuiz: {
       handler: function () {
         this.userAnswers = this.getSingleQuiz.questions.map(() => ({
-          answer: [],
+          answer: [
+            { id: null, val: false },
+            { id: null, val: false },
+            { id: null, val: false },
+            { id: null, val: false },
+          ],
         }));
       },
     },
