@@ -32,6 +32,14 @@ const userSchema = mongoose.Schema({
         minlength:8
 
     },
+    solvedQuizzes: [
+        {
+            id: String,
+            score: String,
+            name: String,
+            category: String
+        }
+    ],
     role: {
         type: String,
         required: true

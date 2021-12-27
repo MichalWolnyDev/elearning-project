@@ -5,7 +5,7 @@
     tile
   >
       <v-list>
-        <v-list-item link>
+        <v-list-item :to="dashboardMain">
           <v-list-item-content>
             <v-list-item-title class="text-h6">
               {{ currentUser.name }}
@@ -58,6 +58,7 @@ import { mapActions } from "vuex";
   export default {
     data: () => ({
       selectedItem: 0,
+      dashboardMain: "/dashboard",
       items: [
         { text: 'Użytkownicy', icon: 'mdi-account-multiple', link: '/dashboard/admin/users'},
         { text: 'Quizy', icon: 'mdi-file-document', link: '/dashboard/admin/quiz' },
@@ -88,3 +89,8 @@ import { mapActions } from "vuex";
     }
   }
 </script>
+<style scoped>
+.v-list-item--link:before{
+  background-color: transparent;
+}
+</style>

@@ -8,6 +8,7 @@ import Quiz from "./views/Dashboard/Admin/Quiz.vue";
 import Users from "./views/Dashboard/Admin/Users.vue";
 import Students from "./views/Dashboard/Students.vue";
 import TakeQuiz from "./views/Dashboard/TakeQuiz.vue";
+import Main from "./views/Dashboard/Main.vue";
 
 Vue.use(Router);
 
@@ -34,6 +35,28 @@ let router = new Router({
         is_admin: false
       },
       children: [
+        {
+          path: "/",
+          name: "main",
+          component: Main,
+          meta: {
+            requiresAuth: true,
+            is_admin: false,
+            is_teacher: false
+          }
+
+        },{
+          path: "/dashboard/students",
+          name: "students",
+          component: Students,
+          meta: {
+            requiresAuth: true,
+            is_admin: false,
+            is_teacher: false
+          }
+
+
+        },
         {
           path: "/dashboard/admin/users",
           name: "users",

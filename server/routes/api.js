@@ -112,8 +112,27 @@ router.get('/user/usersList', function(req, res) {
       userMap[user._id] = user;
     });
 
-    res.send(userMap);  
+    res.send(userMap);    
   });
 });
+
+router.post('/user/updateSolved/:id', function(req, res){
+  console.log(req);
+
+  User.updateOne({ _id: req.params.id }, {
+    $push: {
+      solvedQuizzes: {
+        id: req.body.id,
+        score: req.body.score,
+        name: req.body.name,
+        category: req.body.category
+      }
+    }
+  }, (err) => {
+    if(err) return res.status(400).send(err);
+
+      res.sendStatus(200);
+  })
+})
 
 module.exports = router
