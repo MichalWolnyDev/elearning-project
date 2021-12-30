@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const {auth} = require('../middlewares/auth');
+const { auth } = require('../middlewares/auth');
 
 const router = require('express').Router();
 
@@ -33,90 +33,94 @@ router.post('/user/register', function (req, res) {
 });
 
 // login user
-router.post('/user/login', function(req,res){
+router.post('/user/login', function (req, res) {
   let token = req.cookies.auth;
 
-  User.findByToken(token,(err,user)=>{
-      if(err) return  res(err);
-      if(user) return res.status(400).json({
-          error: true,
-          message: "Jesteś już zalogowany"
-      });
-  
-      else{
-          User.findOne({'email':req.body.email}, function(err,user) {
-              if(!user) return res.json({isAuth: false, message: 'Nie znaleziono takiego adresu e-mail'});
-      
-              user.comparePassword(req.body.password, (err,isMatch) => {
-                  if(!isMatch) return res.json({isAuth: false, message: "Hasła nie są identyczne"});
-      
-              user.generateToken((err,user) => {
-                  if(err) return res.status(400).send(err);
-                  res.cookie('auth',user.token, {credentials: 'include', maxAge: 2592000,
-                  httpOnly: true,}).json({
-                      isAuth : true,
-                      id : user._id,
-                      email : user.email,
-                      role: user.role
-                  });
+  User.findByToken(token, (err, user) => {
+    if (err) return res(err);
+    if (user) return res.status(400).json({
+      error: true,
+      message: "Jesteś już zalogowany"
+    });
 
-              });    
+    else {
+      User.findOne({ 'email': req.body.email }, function (err, user) {
+        if (!user) return res.json({ isAuth: false, message: 'Nie znaleziono takiego adresu e-mail' });
+
+        user.comparePassword(req.body.password, (err, isMatch) => {
+          if (!isMatch) return res.json({ isAuth: false, message: "Hasła nie są identyczne" });
+
+          user.generateToken((err, user) => {
+            if (err) return res.status(400).send(err);
+            res.cookie('auth', user.token, {
+              credentials: 'include', maxAge: 2592000,
+              httpOnly: true,
+            }).json({
+              isAuth: true,
+              id: user._id,
+              email: user.email,
+              role: user.role
+            });
+
           });
         });
-      }
+      });
+    }
   });
 });
 
 // get logged in user
-router.get('/user/profile',auth,function(req,res){
+router.get('/user/profile', auth, function (req, res) {
   res.json({
-      isAuth: true,
-      id: req.user._id,
-      email: req.user.email,
-      name: req.user.firstName + " " + req.user.lastName,
-      role: req.user.role
-      
+    isAuth: true,
+    id: req.user._id,
+    email: req.user.email,
+    name: req.user.firstName + " " + req.user.lastName,
+    role: req.user.role,
+    solvedQuizzes: req.user.solvedQuizzes
+
+
   })
 });
 
 // get logged in user
-router.delete('/user/delete/:id',function(req,res){
+router.delete('/user/delete/:id', function (req, res) {
   User
-  .findByIdAndRemove(req.params.id)
-  .exec()
-  .then(doc => {
-    if(!doc) { return res.status(404).end(); }
+    .findByIdAndRemove(req.params.id)
+    .exec()
+    .then(doc => {
+      if (!doc) { return res.status(404).end(); }
 
-    return res.status(204).end();
-  })
-  .catch(err => next(err));
+      return res.status(204).end();
+    })
+    .catch(err => next(err));
 });
 
 //logout user
-router.get('/user/logout',auth ,function(req,res){
-  req.user.deleteToken(req.token,(err,user)=>{
-      if(err) return res.status(400).send(err);
+router.get('/user/logout', auth, function (req, res) {
+  req.user.deleteToken(req.token, (err, user) => {
+    if (err) return res.status(400).send(err);
 
-      res.sendStatus(200);
+    res.sendStatus(200);
   });
 
-}); 
+});
 
 //return user list
-router.get('/user/usersList', function(req, res) {
-  User.find({}, function(err, users) {
+router.get('/user/usersList', function (req, res) {
+  User.find({}, function (err, users) {
     var userMap = {};
 
-    users.forEach(function(user) {
+    users.forEach(function (user) {
       console.log(user);
       userMap[user._id] = user;
     });
 
-    res.send(userMap);    
+    res.send(userMap);
   });
 });
 
-router.post('/user/updateSolved/:id', function(req, res){
+router.post('/user/updateSolved/:id', function (req, res) {
   console.log(req);
 
   User.updateOne({ _id: req.params.id }, {
@@ -129,9 +133,9 @@ router.post('/user/updateSolved/:id', function(req, res){
       }
     }
   }, (err) => {
-    if(err) return res.status(400).send(err);
+    if (err) return res.status(400).send(err);
 
-      res.sendStatus(200);
+    res.sendStatus(200);
   })
 })
 

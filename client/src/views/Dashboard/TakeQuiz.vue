@@ -13,47 +13,45 @@
     <div>
       <div v-if="!hideQuiz">
         <v-container>
-      <v-row class="question__row">
-        <v-card
-          class="pa-6 mb-6 w-100"
-          v-for="(question, id) in getSingleQuiz.questions"
-          :key="id"
-        >
-          <h2 class="question__title">
-            Pytanie nr. {{ id + 1 }}: {{ question.text }}
-          </h2>
-          <div
-            class="answer__row"
-            v-for="(answer, answerId) in question.answers"
-            :key="answerId"
-          >
-            <div>
-              <strong>{{ toLetters(answerId + 1) }}:</strong>
-              {{ answer.text }}
-            </div>
-            <div>
-              <v-checkbox
-                :value="false"
-                v-model="userAnswers[id].answer[answerId].val"
-                @change="updateUserAnswer(id, answerId, answer._id)"
+          <v-row class="question__row">
+            <v-card
+              class="pa-6 mb-6 w-100"
+              v-for="(question, id) in getSingleQuiz.questions"
+              :key="id"
+            >
+              <h2 class="question__title">
+                Pytanie nr. {{ id + 1 }}: {{ question.text }}
+              </h2>
+              <div
+                class="answer__row"
+                v-for="(answer, answerId) in question.answers"
+                :key="answerId"
               >
-              </v-checkbox>
-            </div>
-          </div>
-        </v-card>
-      </v-row>
-    </v-container>
+                <div>
+                  <strong>{{ toLetters(answerId + 1) }}:</strong>
+                  {{ answer.text }}
+                </div>
+                <div>
+                  <v-checkbox
+                    :value="false"
+                    v-model="userAnswers[id].answer[answerId].val"
+                    @change="updateUserAnswer(id, answerId, answer._id)"
+                  >
+                  </v-checkbox>
+                </div>
+              </div>
+            </v-card>
+          </v-row>
+        </v-container>
 
-    <v-container>
-      <v-row class="d-flex justify-center pa-3">
-        <v-btn color="success" @click="checkQuiz"> Zapisz </v-btn>
-      </v-row>
-    </v-container>
+        <v-container>
+          <v-row class="d-flex justify-center pa-3">
+            <v-btn color="success" @click="checkQuiz"> Zapisz </v-btn>
+          </v-row>
+        </v-container>
       </div>
       <div v-else>
-        <h2>
-          Twój wynik: {{ score }}
-        </h2>
+        <h2>Twój wynik: {{ score }}</h2>
       </div>
     </div>
   </div>
@@ -63,7 +61,7 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   name: "TakeQuiz",
   computed: {
-    ...mapGetters(["getSingleQuiz"]),
+    ...mapGetters(["getSingleQuiz", "getUserInfo"]),
   },
   data: () => ({
     userAnswers: null,
@@ -87,14 +85,23 @@ export default {
     updateUserAnswer(a, b, c) {
       this.userAnswers[a].answer[b].id = c;
     },
+    sendAnswer(payload) {
+      this.$http
+        .post("/api/user/updateSolved/" + this.getUserInfo.id, payload)
+        .then((res) => {
+          console.log(payload)
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     checkQuiz() {
+      var _this = this;
       this.score = 0;
-      
 
       this.getSingleQuiz.questions.map((e) => {
-
         for (var i in e.answers) {
-
           for (var j = 0; j < 4; j++) {
             var arr = this.userAnswers[j].answer;
 
@@ -107,10 +114,18 @@ export default {
             }
           }
         }
-
       });
-      this.hideQuiz = true
- 
+
+
+      setTimeout(function(){
+        _this.sendAnswer({
+        id: _this.getSingleQuiz._id,
+        score: _this.score,
+        name: _this.getSingleQuiz.quizName,
+        category: _this.getSingleQuiz.quizCategory,
+      });
+      }, 2000)
+      this.hideQuiz = true;
     },
   },
   mounted() {},

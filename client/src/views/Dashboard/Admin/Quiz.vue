@@ -2,7 +2,6 @@
   <div>
     <v-container class="spacing-playground pa-6" fluid>
       <AddQuiz v-model="showQuizCreate" />
-
       <v-row v-if="showList">
         <v-card
           v-for="(quiz, id) in getQuizList"
@@ -15,12 +14,19 @@
               {{ quiz.quizName }}
             </p>
             <p class="quizzes__category">Kategoria: {{ quiz.quizCategory }}</p>
-            <a :href="'/dashboard/takequiz/' + quiz._id">
+            <div v-if="!getUserInfo.solvedQuizzes.some(o => o.id == quiz._id)">
+              <a :href="'/dashboard/takequiz/' + quiz._id">
               <v-btn elevation="2">
               Rozwiąż quiz
 
               </v-btn>
             </a>
+            </div>
+            <div v-else>
+              <p>
+                Rozwiązałeś już ten quiz!
+              </p>
+            </div>
             <!-- <p class="quizzes__category">
               Pytania (temp): {{ quiz.questions }}
             </p> -->
@@ -67,16 +73,21 @@ export default {
   },
   data: () => ({
     showQuizCreate: false,
-    showList: true,
+    showList: false,
   }),
   computed: {
-    ...mapGetters(["getQuizList"]),
+    ...mapGetters(["getQuizList", "getUserInfo"]),
   },
   methods: {
     ...mapActions(["fetchQuizzes"]),
   },
   mounted() {
+    var _this = this;
     this.fetchQuizzes();
+
+    setTimeout(function(){
+      _this.showList = true;
+    }, 2000)
   },
 };
 </script>
