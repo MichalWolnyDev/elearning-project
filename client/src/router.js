@@ -67,13 +67,13 @@ let router = new Router({
           }
         },
         {
-          path: "/dashboard/admin/quiz",
+          path: "/dashboard/quiz",
           name: "quiz",
           component: Quiz,
           meta: {
             requiresAuth: true,
             is_admin: false,
-            is_teacher: true
+            is_teacher: false
           }
 
         },

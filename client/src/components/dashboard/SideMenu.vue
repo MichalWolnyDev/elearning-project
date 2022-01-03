@@ -61,8 +61,8 @@ import { mapActions } from "vuex";
       dashboardMain: "/dashboard",
       items: [
         { text: 'Użytkownicy', icon: 'mdi-account-multiple', link: '/dashboard/admin/users'},
-        { text: 'Quizy', icon: 'mdi-file-document', link: '/dashboard/admin/quiz' },
-        { text: 'Students', icon: 'mdi-file-document', link: '/dashboard/students' },
+        { text: 'Quizy', icon: 'mdi-file-document', link: '/dashboard/quiz' },
+        // { text: 'Students', icon: 'mdi-file-document', link: '/dashboard/students' },
       ],
     }),
     computed: {

@@ -2,9 +2,9 @@
   <div>
     <v-container class="spacing-playground pa-6" fluid>
         <AddUser v-model="showUserForm"/>
-      <v-row>
+      <v-row v-if="showList">
         <v-card
-          v-for="(user, id) in users"
+          v-for="(user, id) in getUserList"
           :key="id"
           class="d-flex justify-space-between align-center pa-6 mb-6"
           width="100%"
@@ -45,36 +45,32 @@
           </div>
         </v-card>
       </v-row>
+      <Loader v-else />
     </v-container>
   </div>
 </template>
 
 <script>
 import AddUser from "@/components/dashboard/AddUser.vue";
-
+import Loader from "@/components/Loader.vue";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "users",
   components: {
-    AddUser
+    AddUser,
+    Loader
   },
   data: () => ({
     users: [],
     showUserForm: false,
+    showList: false,
   }),
+  computed: {
+    ...mapGetters(["getUserList"]),
+  },
   methods: {
-    async fetchUsers(){
-      var _this = this;
-      await this.$http.get('/api/user/usersList')
-      .then((res) => {
-        _this.users = res.data;
-
-        console.log(_this.users);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-    },
+    ...mapActions(["fetchUsers"]),
     async deleteUser(id){
       // var _this = this;
       await this.$http.delete('/api/user/delete/' + id)
@@ -87,7 +83,12 @@ export default {
     }
   },
   mounted(){
+    var _this = this;
     this.fetchUsers();
+
+    setTimeout(function(){
+      _this.showList = true;
+    }, 2000)
   }
 };
 </script>

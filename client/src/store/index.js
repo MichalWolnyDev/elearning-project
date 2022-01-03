@@ -10,7 +10,8 @@ const store = new Vuex.Store({
     test: "dupa",
     loginApiStatus: "",
     quizList: [],
-    singleQuiz: []
+    singleQuiz: [],
+    userList: []
   },
   getters: {
     getUserInfo(state) {
@@ -21,6 +22,9 @@ const store = new Vuex.Store({
     },
     getQuizList(state) {
       return state.quizList;
+    },
+    getUserList(state) {
+      return state.userList;
     },
     getSingleQuiz(state) {
       return state.singleQuiz;
@@ -74,6 +78,15 @@ const store = new Vuex.Store({
           console.log(err);
         });
     },
+    async fetchUsers({commit}){
+      await Vue.axios.get('/api/user/usersList')
+      .then((res) => {
+        commit("setUserList", res.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    },
     async fetchSingleQuiz({commit}, payload) {
       await Vue.axios
         .get("/quizapi/quizzes/"+payload)
@@ -94,6 +107,9 @@ const store = new Vuex.Store({
     },
     setQuizList(state, data) {
       state.quizList = data;
+    },
+    setUserList(state, data) {
+      state.userList = data;
     },
     setSingleQuiz(state, data) {
       state.singleQuiz = data;

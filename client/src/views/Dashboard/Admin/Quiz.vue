@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container class="spacing-playground pa-6" fluid>
-      <AddQuiz v-model="showQuizCreate" />
+      <AddQuiz v-if="getUserInfo.role == 'admin' || getUserInfo.role == 'teacher'" v-model="showQuizCreate" />
       <v-row v-if="showList">
         <v-card
           v-for="(quiz, id) in getQuizList"

@@ -94,6 +94,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minLength, email } from "vuelidate/lib/validators";
+import { mapActions } from "vuex";
 
 export default {
   mixins: [validationMixin],
@@ -169,6 +170,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["fetchUsers"]),
     submit() {
       this.$v.$touch();
 
@@ -179,6 +181,7 @@ export default {
           .post("/api/user/register", this.formData)
           .then((res) => {
             this.show = false;
+            this.fetchUsers()
             console.log(res);
           })
           .catch((err) => {
