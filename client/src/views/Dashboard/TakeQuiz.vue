@@ -97,7 +97,7 @@ export default {
         });
     },
     checkQuiz() {
-      // var _this = this;
+      var _this = this;
       this.score = 0;
       var arrQuiz = [];
       var arrAnswers = []
@@ -113,55 +113,33 @@ export default {
       })
 
 
-      console.log(arrQuiz)
-      console.log("******")
-      console.log(arrAnswers)
+      // console.log(arrQuiz)
+      // console.log("******")
+      // console.log(arrAnswers)
 
       for(var i = 0; i < arrQuiz.length; i++){
-        for(var j = 0; j < arrQuiz[i].length; j++){
-          if(arrQuiz[i].isCorrect == true && arrAnswers[i].val == true){
-            console.log("dodaj punkt")
+        for(var j = 0; j < arrAnswers.length - 1; j++){
+          // console.log(i + " " + j)
+          // console.log("========")
+          // console.log(arrQuiz[i][j].isCorrect)
+          // console.log("--as-")
+          // console.log(arrAnswers[i][j].val)
+          // console.log("========")
+          if(arrQuiz[i][j].isCorrect == true && arrAnswers[i][j].val == true ){
+            this.score += 1;
           }
         }
       }
-      // this.getSingleQuiz.questions.map((e) => {
-      //   for (var i in e.answers) {
-      //     console.log(i + " index pytania")
-      //     for (var j = 0; j < 4; j++) {
-      //       console.log(j + " index pojedynczej odpowiedzi")
-      //       var arr = null
-      //       arr = this.userAnswers[j].answer;
-
-      //       console.log("**********")
-      //       console.log(arr)
-      //       console.log( e.answers[i].isCorrect)
-      //       console.log("***********")
-      //       if (arr != undefined) {
-      //         if(e.answers[i].isCorrect == true){
-      //           for(var k = 0; k < 4; k++){
-      //             if (arr[k].val == true) {
-      //             this.score += 1;
-      //           }
-      //           }
-      //         }
-              
-      //       }
-      //       console.log(this.score + " wynik")
-      //     }
-      //     console.log("==========")
-      //   }
-      // });
-
-
-      // setTimeout(function(){
-      //   _this.sendAnswer({
-      //   id: _this.getSingleQuiz._id,
-      //   score: _this.score,
-      //   name: _this.getSingleQuiz.quizName,
-      //   category: _this.getSingleQuiz.quizCategory,
-      // });
-      // }, 2000)
-      // this.hideQuiz = true;
+  
+      setTimeout(function(){
+        _this.sendAnswer({
+        id: _this.getSingleQuiz._id,
+        score: _this.score,
+        name: _this.getSingleQuiz.quizName,
+        category: _this.getSingleQuiz.quizCategory,
+      });
+      }, 2000)
+      this.hideQuiz = true;
     },
   },
   mounted() {},
