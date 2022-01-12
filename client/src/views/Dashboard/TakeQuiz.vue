@@ -103,28 +103,19 @@ export default {
       var arrAnswers = []
 
       this.getSingleQuiz.questions.map((e) => {
-        // console.log(e.answers)
         arrQuiz.push(e.answers)
       })
 
       this.userAnswers.map((e) => {
-        // console.log(e.answer)
         arrAnswers.push(e.answer)
       })
 
 
-      // console.log(arrQuiz)
-      // console.log("******")
-      // console.log(arrAnswers)
+     
 
       for(var i = 0; i < arrQuiz.length; i++){
-        for(var j = 0; j < arrAnswers.length - 1; j++){
-          // console.log(i + " " + j)
-          // console.log("========")
-          // console.log(arrQuiz[i][j].isCorrect)
-          // console.log("--as-")
-          // console.log(arrAnswers[i][j].val)
-          // console.log("========")
+        for(var j = 0; j < 4; j++){
+   
           if(arrQuiz[i][j].isCorrect == true && arrAnswers[i][j].val == true ){
             this.score += 1;
           }
